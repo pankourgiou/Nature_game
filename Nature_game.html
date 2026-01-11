@@ -1,0 +1,206 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>🌍 Nature, Math & The Future — An Interactive Reflection Game</title>
+<style>
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: radial-gradient(circle at top, #1b3a4b, #0b132b);
+    color: #eaeaea;
+}
+header {
+    text-align: center;
+    padding: 40px 20px;
+    background: rgba(0,0,0,0.4);
+}
+h1 {
+    font-size: 2.5em;
+}
+.stats {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    padding: 20px;
+}
+.stat-card {
+    background: rgba(0,0,0,0.5);
+    padding: 20px;
+    border-radius: 12px;
+    min-width: 220px;
+    text-align: center;
+    box-shadow: 0 0 15px rgba(0,0,0,0.5);
+}
+.gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+    padding: 20px;
+}
+.card {
+    background: rgba(0,0,0,0.5);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 0 15px rgba(0,0,0,0.5);
+    transition: transform 0.3s;
+}
+.card:hover {
+    transform: scale(1.03);
+}
+.card img {
+    width: 100%;
+    display: block;
+}
+.card .text {
+    padding: 15px;
+}
+.game-panel {
+    text-align: center;
+    padding: 30px;
+    background: rgba(0,0,0,0.4);
+}
+button {
+    padding: 12px 20px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    background: linear-gradient(45deg, #4caf50, #8bc34a);
+    color: #000;
+    font-weight: bold;
+    margin: 5px;
+}
+.progress {
+    margin-top: 15px;
+    font-size: 20px;
+}
+.story {
+    padding: 30px;
+    max-width: 900px;
+    margin: auto;
+    line-height: 1.6;
+    font-size: 1.1em;
+}
+footer {
+    text-align: center;
+    padding: 30px;
+    opacity: 0.8;
+}
+</style>
+</head>
+<body>
+
+<header>
+<h1>🌍 Nature, Mathematics & Responsibility</h1>
+<p>An interactive gallery + data + philosophy experience</p>
+</header>
+
+<section class="stats">
+<div class="stat-card"><h3>🌲 Forest Loss</h3><p>~10 million hectares / year</p></div>
+<div class="stat-card"><h3>🐾 Species at Risk</h3><p>~1,000,000 species</p></div>
+<div class="stat-card"><h3>🌡️ Warming</h3><p>~1.2°C above pre-industrial</p></div>
+<div class="stat-card"><h3>🏭 CO₂</h3><p>~420 ppm in atmosphere</p></div>
+</section>
+
+<section class="game-panel">
+<h2>🎮 Your Impact Simulation</h2>
+<p>Each action represents a real-world positive choice.</p>
+<div class="progress" id="score">Impact Score: 0</div>
+<div class="progress" id="level">Level: 1 — Observer</div>
+<button onclick="act('plant')">🌱 Plant Trees</button>
+<button onclick="act('save')">💧 Save Water</button>
+<button onclick="act('clean')">♻️ Reduce Waste</button>
+</section>
+
+<section class="story">
+<h2>📜 The Idea</h2>
+<p>
+Nature can be seen as a gigantic dynamic system — a living equation with billions of variables.
+Every forest is a data structure. Every species is a unique algorithm. Every river is a flow of information.
+Mathematics tells us that complex systems can collapse if critical thresholds are crossed.
+Philosophy tells us that we are not outside this system — we are part of it.
+Technology gives us power. Wisdom tells us how to use it.
+</p>
+<p>
+This page is a small symbolic simulation: your score represents accumulated positive actions.
+In reality, civilization works the same way — slow changes, accumulated over time, determine the future.
+</p>
+</section>
+
+<section class="gallery">
+<script>
+// Array of 19 haikus
+const haikus = [
+    "Morning dew sparkles,\nWhispers of the forest green,\nLife wakes silently.",
+    "River bends softly,\nCarving secrets through the land,\nStone and water dance.",
+    "Autumn leaves descend,\nColors in gentle cascade,\nTime slows its passage.",
+    "Snow blankets the earth,\nSilent as a frozen breath,\nFootsteps disappear.",
+    "Moonlight on the lake,\nRipples shine with silver light,\nNight holds its secrets.",
+    "Blossoms in the breeze,\nPetals twirl like soft music,\nSpring hums quietly.",
+    "Wind through ancient pines,\nSongs of old echo softly,\nNature remembers.",
+    "Mountains touch the clouds,\nEagles soar in endless blue,\nSky greets the earth's edge.",
+    "Sun warms the meadow,\nBees hum in endless labor,\nLife buzzes gently.",
+    "Rain taps on the roof,\nRhythm of the world outside,\nDreams blend with the storm.",
+    "Stars pierce the night sky,\nGalaxies whisper their tales,\nInfinity hums.",
+    "Frosted windowpane,\nPatterns of cold art emerge,\nWinter's breath revealed.",
+    "Cicadas singing,\nSummer's pulse beats through the trees,\nTime flows in rhythm.",
+    "Desert sands shifting,\nWind sculpts the dunes endlessly,\nSolitude in gold.",
+    "Tide pulls on the shore,\nMoon’s quiet command displayed,\nOcean’s pulse revealed.",
+    "Fog hugs the valley,\nMisty fingers trace the hills,\nMystery lingers.",
+    "Cherry blossoms fall,\nSoft snow on a spring morning,\nEphemeral life.",
+    "Lightning splits the sky,\nThunder rolls its deep laughter,\nStorm dances wildly.",
+    "Quiet night garden,\nFireflies wink like tiny stars,\nMagic in darkness."
+];
+
+let galleryHTML = "";
+for (let i = 0; i < 19; i++) {
+    galleryHTML += `
+    <div class="card">
+        <img src="mirror${i+1}.jpg" alt="Nature ${i+1}">
+        <div class="text">
+            <b>Reflection ${i+1}</b>
+            <p>${haikus[i].replace(/\n/g, "<br>")}</p>
+        </div>
+    </div>
+    `;
+}
+document.write(galleryHTML);
+</script>
+</section>
+
+
+<footer>
+<p>🌌 A reflection on nature, data, mathematics, and human responsibility.</p>
+<p>You can expand this into a real game, a digital exhibition, or an educational experience.</p>
+</footer>
+
+<script>
+let score = 0;
+let level = 1;
+
+function updateLevel() {
+    if (score >= 100) level = 5;
+    else if (score >= 60) level = 4;
+    else if (score >= 30) level = 3;
+    else if (score >= 10) level = 2;
+    else level = 1;
+
+    let titles = ["Observer", "Protector", "Restorer", "Guardian", "Architect of the Future"];
+    document.getElementById("level").innerText = "Level: " + level + " — " + titles[level-1];
+}
+
+function act(type) {
+    if (type === "plant") score += 3;
+    if (type === "save") score += 2;
+    if (type === "clean") score += 1;
+
+    document.getElementById("score").innerText = "Impact Score: " + score;
+    updateLevel();
+}
+</script>
+
+</body>
+</html>
